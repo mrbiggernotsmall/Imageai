@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Global AI Lab 🚀</title>
+    <style>
+        body { background: #0a0a0a; color: white; text-align: center; font-family: sans-serif; padding: 30px; }
+        .card { background: #111; max-width: 500px; margin: auto; padding: 30px; border-radius: 25px; border: 1px solid #333; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; border: 1px solid #444; background: #000; color: #00f2fe; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; border-radius: 50px; border: none; background: #00f2fe; font-weight: bold; cursor: pointer; font-size: 18px; }
+        #res { margin-top: 20px; min-height: 300px; border: 2px dashed #222; border-radius: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        img { max-width: 100%; display: none; }
+        #status { color: #888; font-size: 14px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>مختبر الذكاء الاصطناعي العالمي 🛰️</h2>
+        <input type="password" id="k" value="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">
+        <input type="text" id="p" placeholder="صف الصورة بالإنجليزية...">
+        <button onclick="draw()">توليد الصورة ⚡</button>
+        <div id="res"><img id="i"></div>
+        <p id="status">جاهز للاستلام...</p>
+    </div>
+
+    <script>
+        async function draw() {
+            const p = document.getElementById('p').value;
+            const k = document.getElementById('k').value.trim();
+            const i = document.getElementById('i');
+            const s = document.getElementById('status');
+            if(!p) return;
+            s.innerText = "جاري الاتصال بالسحابة... ⏳";
+            i.style.display = "none";
+
+            try {
+                const r = await fetch("https://api-inference.huggingface.co/models/stabilityai/sdxl-turbo", {
+                    method: "POST",
+                    headers: { "Authorization": "Bearer " + k, "Content-Type": "application/json" },
+                    body: JSON.stringify({ inputs: p })
+                });
+                if(!r.ok) throw new Error("Server Error");
+                const b = await r.blob();
+                i.src = URL.createObjectURL(b);
+                i.style.display = "block";
+                s.innerText = "تمت المهمة بنجاح! ✅";
+            } catch (e) { s.innerText = "فشل: " + e.message; }
+        }
+    </script>
+</body>
+</html>
